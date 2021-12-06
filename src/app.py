@@ -47,7 +47,7 @@ callbacks = [
 opt = keras.optimizers.Adam(learning_rate=0.00001)
 model_mi.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
 
-print('Model loaded. Check http://127.0.0.1:5000/')
+print('\nModel loaded.')
 
 def random_event_choice(indexes, dataset_x, dataset_y):
     random_index = np.random.choice(indexes)
@@ -137,9 +137,10 @@ def predict():
 
     return None
 
-if __name__ == '__main__':
-    # app.run(port=5002, threaded=False)
+app.run(host='0.0.0.0', port='5000')
+# if __name__ == '__main__':
+#     # app.run(port=5002, threaded=False)
 
-    # Serve the app with gevent
-    http_server = WSGIServer(('0.0.0.0', 5000), app)
-    http_server.serve_forever()
+#     # Serve the app with gevent
+#     http_server = WSGIServer(('0.0.0.0', 5000), app)
+#     http_server.serve_forever()
