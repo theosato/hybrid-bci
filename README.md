@@ -18,7 +18,7 @@ $ git clone https://github.com/theosato/hybrid-bci.git
 $ cd hybrid-bci
 
 # 2. Build Docker image
-$ docker build -t hybci_flask_app .
+$ docker build --no-cache -t hybci_flask_app .
 
 # 3. Run!
 $ docker run -it --rm -p 5000:5000 hybci_flask_app
