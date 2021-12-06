@@ -16,9 +16,6 @@ from mne.io import concatenate_raws, read_raw_edf, RawArray
 
 # Some utilites
 import numpy as np
-import seaborn as sn
-from sklearn.metrics import confusion_matrix
-import pymatreader
 from util import base64_to_pil, mi_converter, errp_converter
 
 # Declare a flask app
