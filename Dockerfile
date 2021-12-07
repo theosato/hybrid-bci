@@ -1,20 +1,14 @@
 # set base image (host OS)
 FROM python:3.9
 
+# copy app content to src container folder
+COPY . /src
+
 # set the working directory in the container
 WORKDIR /src
-
-# copy the dependencies file to the working directory
-COPY requirements.txt .
 
 # install dependencies
 RUN pip install -r requirements.txt
 
-# copy the content of the local src directory to the working directory
-COPY src/ .
-
-#Expose the required port
-EXPOSE 5000
-
-# run app
-CMD gunicorn main:app
+# command to run on container start
+CMD [ "python", "app.py" ]

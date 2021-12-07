@@ -137,10 +137,6 @@ def predict():
 
     return None
 
-app.run(host='0.0.0.0', port='5000')
-# if __name__ == '__main__':
-#     # app.run(port=5002, threaded=False)
-
-#     # Serve the app with gevent
-#     http_server = WSGIServer(('0.0.0.0', 5000), app)
-#     http_server.serve_forever()
+if __name__ == '__main__':
+    port = os.environ.get("PORT", 5000)
+    app.run(debug = False, host = '0.0.0.0', port=port)
