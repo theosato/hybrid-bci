@@ -3,6 +3,7 @@ import sys
 
 # Flask
 from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect
+from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
@@ -20,6 +21,8 @@ from util import base64_to_pil, mi_converter, errp_converter
 
 # Declare a flask app
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 path = os.path.dirname(__file__)
 
 # Model saved with Keras model.save()
@@ -74,11 +77,13 @@ def adaptative_process(input_val, pred_lab, model):
         return False
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def index():
     # Main page
     return 'HyBCI Web Application'
 
 @app.route('/predict', methods=['GET', 'POST'])
+@cross_origin()
 def predict():
     if request.method == 'POST':
         global model_mi

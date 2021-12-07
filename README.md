@@ -39,7 +39,7 @@ $ cd hybrid-bci
 $ pip install -r requirements.txt
 
 # 3. Run!
-$ python src\app.py
+$ python app.py
 ```
 
 Open http://localhost:5000 and have fun. :smiley:
