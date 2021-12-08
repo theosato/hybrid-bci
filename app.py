@@ -2,8 +2,7 @@ import os
 import sys
 
 # Flask
-from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect
-from flask_cors import CORS, cross_origin
+from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect, make_response
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
@@ -21,8 +20,6 @@ from util import base64_to_pil, mi_converter, errp_converter
 
 # Declare a flask app
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 path = os.path.dirname(__file__)
 
 # Model saved with Keras model.save()
@@ -50,7 +47,16 @@ callbacks = [
 opt = keras.optimizers.Adam(learning_rate=0.00001)
 model_mi.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
 
-print('\nModel loaded.')
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 def random_event_choice(indexes, dataset_x, dataset_y):
     random_index = np.random.choice(indexes)
@@ -77,14 +83,24 @@ def adaptative_process(input_val, pred_lab, model):
         return False
 
 @app.route('/', methods=['GET'])
-@cross_origin()
 def index():
     # Main page
-    return 'HyBCI Web Application'
+    if request.method == "OPTIONS": # CORS preflight
+        return _build_cors_preflight_response()
+    return _corsify_actual_response(jsonify({
+        'HyBCI Web Application':{
+            'methods': {
+                '/predict': {
+                    'intent': ['RH', 'LH', 'BF', 'TG']
+                }
+            } 
+        }
+    }))
 
-@app.route('/predict', methods=['GET', 'POST'])
-@cross_origin()
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def predict():
+    if request.method == "OPTIONS": # CORS preflight
+        return _build_cors_preflight_response()
     if request.method == 'POST':
         global model_mi
 
@@ -138,9 +154,10 @@ def predict():
         }
         
         # Serialize the result
-        return jsonify(result=result)
-
-    return None
+        return _corsify_actual_response(jsonify(result=result))
+    return _corsify_actual_response(jsonify({
+        "Error": "Invalid request method."
+    }))
 
 if __name__ == '__main__':
     port = os.environ.get("PORT", 5000)

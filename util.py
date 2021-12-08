@@ -8,7 +8,6 @@ import numpy as np
 from PIL import Image
 from io import BytesIO
 
-
 def base64_to_pil(img_base64):
     """
     Convert base64 image data to PIL image
